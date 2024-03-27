@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app.kubernetes.io/name: nginx
+  annotations:
+    custom.io/custom-secret: "ssm-secret"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nginx
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: "nginx:alpine"
+          imagePullPolicy: Always
+          env:
+            - name: ENV
+              value: dev
+          envFrom:
+          - secretRef:
+              name: ssm-secret
+          resources:
+            limits:
+              cpu: 100m
+              memory: 2000Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
